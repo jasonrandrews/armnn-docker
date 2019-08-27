@@ -49,4 +49,10 @@ if [ $USER = "ubuntu" ]; then
     echo -e "$PASSWORD\n$PASSWORD\n" | sudo passwd ubuntu 
 fi 
  
+# Add experimental features to $HOME/.bashrc (if not already there) 
+if grep -q "DOCKER_CLI_EXPERIMENTAL" $HOME/.bashrc; then 
+    echo "experimental features already set in .bashrc" 
+else 
+    echo "export DOCKER_CLI_EXPERIMENTAL=enabled" >> $HOME/.bashrc
+fi
  

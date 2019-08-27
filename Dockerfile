@@ -13,8 +13,12 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 WORKDIR /home/ubuntu
 USER ubuntu
 
+# Build machine and target machine linux/arm/v7  linux/arm64 or linux/amd64
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 
 COPY --chown=ubuntu:ubuntu build-armnn.sh /home/ubuntu
 
-RUN /home/ubuntu/build-armnn.sh
+RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ] ; then /home/ubuntu/build-armnn.sh -a armv7a ; else /home/ubuntu/build-armnn.sh ; fi
+
 

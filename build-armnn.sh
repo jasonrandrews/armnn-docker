@@ -62,7 +62,7 @@ cd $HOME
 while [ -d armnn-devenv/pkg ]; do
     read -p "Do you wish to remove the existing armnn-devenv build environment? " yn
     case $yn in
-        [Yy]*) rm -rf armnn-devenv/pkg armnn-devenv/ComputeLibrary armnn-devenv/armnn armnn-devenv/gator ; break ;;
+        [Yy]*) rm -rf armnn-devenv/pkg armnn-devenv/ComputeLibrary armnn-devenv/armnn ; break ;;
         [Nn]*) echo "Exiting " ; exit;;
         *) echo "Please answer yes or no.";;
     esac
@@ -103,7 +103,7 @@ MEM=`awk '/MemTotal/ {print $2}' /proc/meminfo`
 # don't override command line and default to aarch64
 [ -z "$Arch" ] && Arch=`uname -m`
 
-if [ $Arch = "armv7l" ]; then
+if [ $Arch = "armv7l" ] || [ $Arch = "armv7a" ]; then
     Arch=armv7a
     PREFIX=arm-linux-gnueabihf-
 else
@@ -136,9 +136,7 @@ popd
 
 
 # Arm Compute Library 
-# Pick either official version from github or annotated version for Streamline
-
-# official version
+# latest version
 git clone https://github.com/ARM-software/ComputeLibrary.git
 
 echo "building Arm CL"
@@ -150,7 +148,7 @@ echo "gcc version is $VER"
 
 scons arch=$Arch neon=1 opencl=$OpenCL embed_kernels=$OpenCL Werror=0 \
   extra_cxx_flags="-fPIC" benchmark_tests=0 examples=0 validation_tests=0 \
-  os=linux gator_dir="$HOME/armnn-devenv/gator" -j $NPROC
+  os=linux -j $NPROC
 
 popd
 
@@ -190,9 +188,7 @@ make install
 popd
 
 # Arm NN
-# Pick either official version from github or annotated version for Streamline
-
-# official version
+# latest version
 git clone https://github.com/ARM-software/armnn.git
 
 pushd pkg/tensorflow/
@@ -226,8 +222,6 @@ $CrossOptions  \
 -DBUILD_TF_PARSER=1 \
 -DPROTOBUF_ROOT=$HOME/armnn-devenv/pkg/install   \
 -DPROTOBUF_INCLUDE_DIRS=$HOME/armnn-devenv/pkg/install/include   \
--DPROFILING_BACKEND_STREAMLINE=1 \
--DGATOR_ROOT=$HOME/armnn-devenv/gator \
 -DARMCOMPUTENEON=1  \
 -DARMCOMPUTECL=$OpenCL \
 -DPROTOBUF_LIBRARY_DEBUG=$HOME/armnn-devenv/pkg/install/lib/libprotobuf.so \
