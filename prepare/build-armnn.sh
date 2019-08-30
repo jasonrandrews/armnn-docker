@@ -238,5 +238,9 @@ fi
 popd
 
 echo "done, everything in armnn-devenv/"
-cd ..
+
+echo $Arch > ~/.arch
+
+cd $HOME
+
 

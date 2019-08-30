@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as build
 
 RUN echo "root:Arm2019" | chpasswd
 
@@ -18,7 +18,9 @@ ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 
 COPY --chown=ubuntu:ubuntu build-armnn.sh /home/ubuntu
+COPY --chown=ubuntu:ubuntu save-armnn.sh /home/ubuntu
 
 RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ] ; then /home/ubuntu/build-armnn.sh -a armv7a ; else /home/ubuntu/build-armnn.sh ; fi
+
 
 

@@ -1,0 +1,8 @@
+FROM ubuntu:18.04
+
+ADD mnist_tf_convol /root
+ADD data /root
+ADD model /root
+ADD armnn-arm64-v8a.tar.gz /root
+
+CMD [ "/root/mnist_tf_convol", "1", "100"]

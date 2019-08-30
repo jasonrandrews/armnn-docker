@@ -1,0 +1,26 @@
+FROM ubuntu:18.04
+
+RUN echo "root:Arm2019" | chpasswd
+
+RUN apt-get update -y && \
+      apt-get -y install sudo vim curl wget apt-utils git make g++ gdb chrpath
+
+RUN useradd --create-home -s /bin/bash -m ubuntu && echo "ubuntu:Arm2019" | chpasswd && adduser ubuntu sudo
+
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+WORKDIR /home/ubuntu 
+USER ubuntu 
+ 
+# Build machine and target machine linux/arm/v7  linux/arm64 or linux/amd64
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+
+ADD --chown=ubuntu:ubuntu armnn-arm64-v8a.tar.gz /home/ubuntu
+
+RUN chrpath -r /home/ubuntu/armnn/lib /home/ubuntu/armnn/lib/libarmnnTfParser.so
+
+COPY --chown=ubuntu:ubuntu clone.sh /home/ubuntu
+
+RUN /home/ubuntu/clone.sh 
+
